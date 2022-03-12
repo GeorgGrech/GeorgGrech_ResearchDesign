@@ -13,6 +13,22 @@ public class ShootableObject : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
+    protected virtual void ChangeHealth(int amount)
+    {
+        // Change the health by the amount specified in the amount variable
+        health += amount;
+
+        // If the health runs out, then Die.
+        if (health <= 0)
+            Killed();
+
+        /*
+        // Make sure that the health never exceeds the maximum health
+        else if (currentHealth > maxHealth)
+            currentHealth = maxHealth;*/
+    }
+
+    /*
     // Update is called once per frame
     protected virtual void Update()
     {
@@ -20,7 +36,7 @@ public class ShootableObject : MonoBehaviour
         {
             Killed();
         }
-    }
+    }*/
 
     protected virtual void Killed()
     {

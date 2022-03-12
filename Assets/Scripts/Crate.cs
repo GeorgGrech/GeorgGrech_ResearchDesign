@@ -12,9 +12,15 @@ public class Crate : ShootableObject
         base.Start();
     }
 
+    protected override void ChangeHealth(int amount)
+    {
+        base.ChangeHealth(amount);
+    }
+
+    /*
     // Update is called once per frame
     protected override void Update()
     {
         base.Update();
-    }
+    }*/
 }

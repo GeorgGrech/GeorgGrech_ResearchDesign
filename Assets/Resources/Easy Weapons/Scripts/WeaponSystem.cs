@@ -74,9 +74,6 @@ public class WeaponSystem : MonoBehaviour
 		// Make sure the weaponIndex references the correct weapon
 		weaponIndex = index;
 
-		// Make sure beam game objects aren't left over after weapon switching
-		weapons[index].GetComponent<Weapon>().StopBeam();
-
 		// Start be deactivating all weapons
 		for (int i = 0; i < weapons.Length; i++)
 		{
