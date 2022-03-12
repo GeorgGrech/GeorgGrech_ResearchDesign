@@ -97,7 +97,7 @@ public class GameManager : MonoBehaviour
     }
 
     //Single drop method
-    public void DropItem() //Change later to GameObject return to drop item from items[]
+    public GameObject DropItem() //Change later to GameObject return to drop item from items[]
     {
         SetChances();
 
@@ -106,8 +106,10 @@ public class GameManager : MonoBehaviour
 
         //Needs efficiency cleanup
         int checkRange = healthChance;
+        int selectedItem;
         if (ranNum < checkRange)
         {
+            selectedItem = 0;
             Debug.Log("Health Kit dropped");
         }
         else
@@ -115,13 +117,16 @@ public class GameManager : MonoBehaviour
             checkRange += rifleAmmoChance;
             if (ranNum < checkRange)
             {
+                selectedItem = 1;
                 Debug.Log("Ammo 1 dropped");
             }
             else
             {
+                selectedItem = 2;
                 Debug.Log("Ammo 2 dropped");
             }
         }
+        return items[selectedItem];
     }
 
     #endregion

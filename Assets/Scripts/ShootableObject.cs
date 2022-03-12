@@ -40,7 +40,9 @@ public class ShootableObject : MonoBehaviour
 
     protected virtual void Killed()
     {
-        gameManager.DropItem();
+        GameObject itemDrop = gameManager.DropItem();
+        Instantiate(itemDrop,transform.position,transform.rotation);
+
         Destroy(gameObject);
     }
 }
