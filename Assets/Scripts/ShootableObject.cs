@@ -7,6 +7,7 @@ public class ShootableObject : MonoBehaviour
     private GameManager gameManager;
 
     protected int health;
+    private bool isDying = false;
     // Start is called before the first frame update
     protected virtual void Start()
     {
@@ -19,7 +20,7 @@ public class ShootableObject : MonoBehaviour
         health += amount;
 
         // If the health runs out, then Die.
-        if (health <= 0)
+        if (health <= 0 && !isDying)
             Killed();
 
         /*
@@ -40,6 +41,7 @@ public class ShootableObject : MonoBehaviour
 
     protected virtual void Killed()
     {
+        isDying = true;
         GameObject itemDrop = gameManager.DropItem();
         Instantiate(itemDrop,transform.position,transform.rotation);
 

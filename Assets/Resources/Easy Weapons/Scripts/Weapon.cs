@@ -255,6 +255,7 @@ public class Weapon : MonoBehaviour
         if (crosshairTexture == null)
             crosshairTexture = new Texture2D(0, 0);
 
+		/*
 		// Initialize the bullet hole pools list
 		for (int i = 0; i < bulletHolePoolNames.Count; i++)
 		{
@@ -275,7 +276,7 @@ public class Weapon : MonoBehaviour
 				defaultBulletHoles[i] = g.GetComponent<BulletHolePool>();
 			else
 				Debug.LogWarning("Default Bullet Hole Pool does not have a BulletHolePool component.  Please assign GameObjects in the inspector that have the BulletHolePool component.");
-		}
+		}*/
 	}
 	
 	// Update is called once per frame
