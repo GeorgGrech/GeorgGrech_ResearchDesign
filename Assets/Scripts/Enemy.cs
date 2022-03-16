@@ -14,6 +14,10 @@ public class Enemy : ShootableObject
     private AIPath aiPath;
     private AIDestinationSetter destinationSetter;
 
+    //Weapon
+    [SerializeField] private GameObject weaponObject;
+    private Weapon weapon;
+
     //Player detection variables
     [SerializeField] private float detectDistance = 10;
     [SerializeField] private float shootAngle = 30;
@@ -28,7 +32,7 @@ public class Enemy : ShootableObject
         base.Start();
 
         player = GameObject.FindGameObjectWithTag("Player").transform; //Find player
-        //weapon = weaponObject.GetComponent<Weapon>();
+        weapon = weaponObject.GetComponent<Weapon>();
         seeker = GetComponent<Seeker>();
         aiPath = GetComponent<AIPath>();
         destinationSetter = GetComponent<AIDestinationSetter>();
@@ -52,11 +56,11 @@ public class Enemy : ShootableObject
             //animator.SetBool("isFollowing", true);
 
 
-            /*if (PlayerInSight(shootAngle) && !stunActive)
+            if (PlayerInSight(shootAngle))
             {
-                weapon.isFiring = true;
+                weapon.RemoteFire();
             }
-            else weapon.isFiring = false;*/
+            //else weapon.isFiring = false;
         }
     }
 
@@ -70,6 +74,21 @@ public class Enemy : ShootableObject
                 return true;
             }
             return false;
+        }
+        return false;
+    }
+
+    private bool PlayerInSight(float angle)
+    {
+        Vector3 dirToPlayer = (player.position - transform.position).normalized;
+        float angleBetweenPlayer = Vector3.Angle(transform.forward, dirToPlayer);
+        if (angleBetweenPlayer < angle / 2f) //Within the viewing angle
+        {
+            if (!Physics.Linecast(transform.position, player.position, obstacleMask))//if view to player is not being obstructed by obstacle
+            {
+                Debug.Log("Player in sight");
+                return true;
+            }
         }
         return false;
     }

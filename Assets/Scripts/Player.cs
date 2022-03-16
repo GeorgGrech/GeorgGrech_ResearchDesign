@@ -14,5 +14,6 @@ public class Player : MonoBehaviour
     void ChangeHealth(int amount)
     {
         gameManager.PlayerHealth += amount;
+        Debug.Log("Player health now: "+gameManager.PlayerHealth);
     }
 }
