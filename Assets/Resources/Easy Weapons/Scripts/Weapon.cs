@@ -68,6 +68,14 @@ public class SmartBulletHoleGroup
 // The Weapon class itself handles the weapon mechanics
 public class Weapon : MonoBehaviour
 {
+	#region Custom variables
+	//Custom variables - not included in base easy weapons script
+	GameManager gameManager;
+	public int reserveAmmo;
+	public int maxAmmo;
+
+	#endregion
+	#region Easy Weapon variables
 	// Weapon Type
 	public WeaponType type = WeaponType.Projectile;		// Which weapon system should be used
 	
@@ -174,10 +182,11 @@ public class Weapon : MonoBehaviour
 	public Transform muzzleEffectsPosition;				// The spot where the muzzle effects should appear from
 	public bool makeHitEffects = true;					// Whether or not the weapon should make hit effects
 	public GameObject[] hitEffects =
-        new GameObject[] {null};						// Effects to be displayed where the "bullet" hit
+        new GameObject[] {null};                        // Effects to be displayed where the "bullet" hit
 
-	// Bullet Holes
-	public bool makeBulletHoles = true;					// Whether or not bullet holes should be made
+    #region bullet hole variables
+    // Bullet Holes
+    public bool makeBulletHoles = true;					// Whether or not bullet holes should be made
 	public BulletHoleSystem bhSystem = BulletHoleSystem.Tag;	// What condition the dynamic bullet holes should be based off
 	public List<string> bulletHolePoolNames = new
 		List<string>();									// A list of strings holding the names of bullet hole pools in the scene
@@ -188,12 +197,12 @@ public class Weapon : MonoBehaviour
     public List<BulletHolePool> defaultBulletHoles = 
         new List<BulletHolePool>();                     // A list of default bullet holes to be instantiated when none of the custom parameters are met
 	public List<SmartBulletHoleGroup> bulletHoleExceptions =
-		new List<SmartBulletHoleGroup>();				// A list of SmartBulletHoleGroup objects that defines conditions for when no bullet hole will be instantiated.
-														// In other words, the bullet holes in the defaultBulletHoles list will be instantiated on any surface except for
-														// the ones specified in this list.
-
-	// Crosshairs
-	public bool showCrosshair = true;					// Whether or not the crosshair should be displayed
+		new List<SmartBulletHoleGroup>();               // A list of SmartBulletHoleGroup objects that defines conditions for when no bullet hole will be instantiated.
+                                                        // In other words, the bullet holes in the defaultBulletHoles list will be instantiated on any surface except for
+                                                        // the ones specified in this list.
+    #endregion
+    // Crosshairs
+    public bool showCrosshair = true;					// Whether or not the crosshair should be displayed
 	public Texture2D crosshairTexture;					// The texture used to draw the crosshair
 	public int crosshairLength = 10;					// The length of each crosshair line
 	public int crosshairWidth = 4;						// The width of each crosshair line
@@ -206,11 +215,11 @@ public class Weapon : MonoBehaviour
 	public AudioClip dryFireSound;						// Sound to play when the user tries to fire but is out of ammo
 
 	// Other
-	private bool canFire = true;						// Whether or not the weapon can currently fire (used for semi-auto weapons)
+	private bool canFire = true;                        // Whether or not the weapon can currently fire (used for semi-auto weapons)
+    #endregion
 
-
-	// Use this for initialization
-	void Start()
+    // Use this for initialization
+    void Start()
 	{
 		// Calculate the actual ROF to be used in the weapon systems.  The rateOfFire variable is
 		// designed to make it easier on the user - it represents the number of rounds to be fired
@@ -277,8 +286,27 @@ public class Weapon : MonoBehaviour
 			else
 				Debug.LogWarning("Default Bullet Hole Pool does not have a BulletHolePool component.  Please assign GameObjects in the inspector that have the BulletHolePool component.");
 		}*/
+
+
+		#region custom setups
+		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+
+        if (playerWeapon==true) //Check if weapons wielded by player
+        {
+            if (this.transform.CompareTag("Rifle"))
+            {
+				//Use gamemanager rifle ammo
+				Debug.Log("This weapon is a player " + this.transform.tag);
+            }
+            else if (this.transform.CompareTag("Shotgun"))
+			{
+				//Use gamemanager shotgun ammo
+				Debug.Log("This weapon is a player " + this.transform.tag);
+			}
+		}
+		#endregion
 	}
-	
+
 	// Update is called once per frame
 	void Update()
 	{
