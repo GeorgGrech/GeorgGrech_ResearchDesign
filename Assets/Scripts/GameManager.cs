@@ -49,6 +49,29 @@ public class GameManager : MonoBehaviour
         
     }
 
+    //Ammo updating to be accessed from weapon or item drops - Could be cleaned up
+    public void UpdateAmmo(string weapon, int amount)
+    {
+        if (weapon.Equals("Rifle"))
+        {
+            rifleAmmo += amount;
+
+            if (rifleAmmo > maxRifleAmmo)
+                rifleAmmo = maxRifleAmmo;
+            else if (rifleAmmo < 0)
+                rifleAmmo = 0;
+        }
+        else if (weapon.Equals("Shotgun"))
+        {
+            shotgunAmmo += amount;
+
+            if (shotgunAmmo > maxShotgunAmmo)
+                ShotgunAmmo = maxShotgunAmmo;
+            else if (shotgunAmmo < 0)
+                shotgunAmmo = 0;
+        }
+        Debug.Log("Rifle ammo: " + rifleAmmo + "\t Shotgun ammo: " + shotgunAmmo);
+    }
 
     #region Item Drop Selection
 

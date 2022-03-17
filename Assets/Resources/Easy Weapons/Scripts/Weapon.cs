@@ -74,6 +74,8 @@ public class Weapon : MonoBehaviour
 	public int reserveAmmo;
 	public int maxAmmo;
 
+	public string weaponTag;
+
 	#endregion
 	#region Easy Weapon variables
 	// Weapon Type
@@ -221,6 +223,29 @@ public class Weapon : MonoBehaviour
     // Use this for initialization
     void Start()
 	{
+		#region custom setups
+		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+		weaponTag = this.transform.tag;
+
+		if (playerWeapon == true) //Check if weapons wielded by player
+		{
+			if (weaponTag.Equals("Rifle"))
+			{
+				//Use gamemanager rifle ammo
+				reserveAmmo = gameManager.RifleAmmo;
+				maxAmmo = gameManager.maxRifleAmmo;
+			}
+			else if (weaponTag.Equals("Shotgun"))
+			{
+				//Use gamemanager shotgun ammo
+				reserveAmmo = gameManager.ShotgunAmmo;
+				maxAmmo = gameManager.maxShotgunAmmo;
+			}
+			Debug.Log("This weapon is a player " + weaponTag);
+		}
+		#endregion
+
+
 		// Calculate the actual ROF to be used in the weapon systems.  The rateOfFire variable is
 		// designed to make it easier on the user - it represents the number of rounds to be fired
 		// per second.  Here, an actual ROF decimal value is calculated that can be used with timers.
@@ -237,6 +262,7 @@ public class Weapon : MonoBehaviour
 
 		// Start the weapon off with a full magazine
 		currentAmmo = ammoCapacity;
+		UpdateManagerAmmo(-currentAmmo);
 
 		// Give this weapon an audio source component if it doesn't already have one
 		if (GetComponent<AudioSource>() == null)
@@ -287,24 +313,6 @@ public class Weapon : MonoBehaviour
 				Debug.LogWarning("Default Bullet Hole Pool does not have a BulletHolePool component.  Please assign GameObjects in the inspector that have the BulletHolePool component.");
 		}*/
 
-
-		#region custom setups
-		gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
-
-        if (playerWeapon==true) //Check if weapons wielded by player
-        {
-            if (this.transform.CompareTag("Rifle"))
-            {
-				//Use gamemanager rifle ammo
-				Debug.Log("This weapon is a player " + this.transform.tag);
-            }
-            else if (this.transform.CompareTag("Shotgun"))
-			{
-				//Use gamemanager shotgun ammo
-				Debug.Log("This weapon is a player " + this.transform.tag);
-			}
-		}
-		#endregion
 	}
 
 	// Update is called once per frame
@@ -729,16 +737,52 @@ public class Weapon : MonoBehaviour
     // Reload the weapon
     void Reload()
 	{
-		currentAmmo = ammoCapacity;
-		fireTimer = -reloadTime;
-		GetComponent<AudioSource>().PlayOneShot(reloadSound);
+		
 
-		// Send a messsage so that users can do other actions whenever this happens
-		SendMessageUpwards("OnEasyWeaponsReload", SendMessageOptions.DontRequireReceiver);
+        if (GetReserveAmmo() > 0 && currentAmmo != ammoCapacity) //Stop reload 
+        {
+			int roundsUsed;
+			roundsUsed = ammoCapacity - currentAmmo;
+			if (GetReserveAmmo() >= ammoCapacity)
+			{
+				currentAmmo = ammoCapacity;
+
+			}
+			else {
+				currentAmmo += GetReserveAmmo();
+			}
+			UpdateManagerAmmo(-roundsUsed);
+			fireTimer = -reloadTime;
+			GetComponent<AudioSource>().PlayOneShot(reloadSound);
+
+			// Send a messsage so that users can do other actions whenever this happens
+			SendMessageUpwards("OnEasyWeaponsReload", SendMessageOptions.DontRequireReceiver);
+
+        }
+
 	}
 
-	// When the weapon tries to fire without any ammo
-	void DryFire()
+    #region GameManager Data Methods
+    void UpdateManagerAmmo(int amount) //Updates amount in GameManager, checking if weapon is a player weapon first
+    {
+        if (playerWeapon == true)
+        {
+			gameManager.UpdateAmmo(weaponTag, amount);
+        }
+	}
+
+	private int GetReserveAmmo() //Get the remaining ammo for the correct weapon
+	{
+		if (weaponTag.Equals("Rifle"))
+		{
+			return gameManager.RifleAmmo;
+		}
+		else return gameManager.ShotgunAmmo;
+	}
+    #endregion
+
+    // When the weapon tries to fire without any ammo
+    void DryFire()
 	{
 		GetComponent<AudioSource>().PlayOneShot(dryFireSound);
 	}
