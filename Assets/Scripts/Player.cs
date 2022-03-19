@@ -16,4 +16,9 @@ public class Player : MonoBehaviour
         gameManager.PlayerHealth += amount;
         Debug.Log("Player health now: "+gameManager.PlayerHealth);
     }
+
+    private void UpdateAmmo(string weapon, int amount)
+    {
+        gameManager.UpdateAmmo(weapon, amount);
+    }
 }
