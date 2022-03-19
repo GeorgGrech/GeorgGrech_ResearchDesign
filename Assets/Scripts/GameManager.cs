@@ -6,13 +6,17 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager _instance;
 
+    //current values
     [SerializeField] private int playerHealth = 100;
     [SerializeField] private int rifleAmmo = 60; //Weapons start at half amount
     [SerializeField] private int shotgunAmmo = 20;
 
+    //Max values 
     public int maxPlayerHealth = 100;
-    public int maxRifleAmmo = 120;
-    public int maxShotgunAmmo = 40;
+    public int maxRifleAmmo = 90;
+    public int maxShotgunAmmo = 32;
+
+    //Both current and max values ignoring ammo in mag
 
     public int PlayerHealth { get => playerHealth; set => playerHealth = value; }
     public int RifleAmmo { get => rifleAmmo; set => rifleAmmo = value; }
