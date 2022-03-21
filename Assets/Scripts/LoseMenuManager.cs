@@ -8,6 +8,13 @@ using UnityEngine.SceneManagement;
 /// </summary>
 public class LoseMenuManager : MonoBehaviour
 {
+    void Start()
+    {
+        //Re-enable cursor on menu load
+        Cursor.visible = true;
+        Screen.lockCursor = false;
+    }
+
     public void PlayAgain(string sceneName) //Set parameter in inspector, may be changed according to what scene is being tested
     {
         SceneManager.LoadScene(sceneName);
