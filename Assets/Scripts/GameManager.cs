@@ -1,12 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
     public static GameManager _instance;
 
-    //current values
+    //default values
     [SerializeField] private int playerHealth = 100;
     [SerializeField] private int rifleAmmo = 60; //Weapons start at half amount
     [SerializeField] private int shotgunAmmo = 20;
@@ -18,6 +19,7 @@ public class GameManager : MonoBehaviour
 
     //Both current and max values ignoring ammo in mag
 
+    //current values
     public int PlayerHealth { get => playerHealth; set => playerHealth = value; }
     public int RifleAmmo { get => rifleAmmo; set => rifleAmmo = value; }
     public int ShotgunAmmo { get => shotgunAmmo; set => shotgunAmmo = value; }
@@ -44,13 +46,20 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
+    }
+
+    void ResetToDefault() //Reset health and ammo to default
+    {
+        PlayerHealth = playerHealth;
+        RifleAmmo = rifleAmmo;
+        ShotgunAmmo = shotgunAmmo;
     }
 
     //Ammo updating to be accessed from weapon or item drops - Could be cleaned up
@@ -75,6 +84,24 @@ public class GameManager : MonoBehaviour
                 shotgunAmmo = 0;
         }
         Debug.Log("Rifle ammo: " + rifleAmmo + "\t Shotgun ammo: " + shotgunAmmo);
+    }
+
+    public void UpdateHealth(int amount)
+    {
+        PlayerHealth += amount;
+        if (PlayerHealth > maxPlayerHealth)
+        {
+            PlayerHealth = maxPlayerHealth; //cap health at max
+        }
+
+        else if (playerHealth <= 0)
+        {
+            SceneManager.LoadScene("GameOver");
+            ResetToDefault();
+        }
+
+
+        Debug.Log("Player health now: " + PlayerHealth);
     }
 
     #region Item Drop Selection

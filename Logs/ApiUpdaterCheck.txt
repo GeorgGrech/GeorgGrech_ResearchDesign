@@ -118,3 +118,23 @@ C# parse time         : 197ms
 candidates check time : 38ms
 console write time    : 0ms
 
+[api-updater (non-obsolete-error-filter)] 21/03/2022 11:54:52 : Starting I:/Georg HDD Backup/Editor/Data/Tools/ScriptUpdater/APIUpdater.NonObsoleteApiUpdaterDetector.exe
+[api-updater (non-obsolete-error-filter)] 
+----------------------------------
+jit/startup time      : 3233.4477ms
+moved types parse time: 172ms
+candidates parse time : 1ms
+C# parse time         : 780ms
+candidates check time : 87ms
+console write time    : 2ms
+
+[api-updater (non-obsolete-error-filter)] 21/03/2022 11:55:01 : Starting I:/Georg HDD Backup/Editor/Data/Tools/ScriptUpdater/APIUpdater.NonObsoleteApiUpdaterDetector.exe
+[api-updater (non-obsolete-error-filter)] 
+----------------------------------
+jit/startup time      : 151.6359ms
+moved types parse time: 52ms
+candidates parse time : 4ms
+C# parse time         : 182ms
+candidates check time : 24ms
+console write time    : 0ms
+
