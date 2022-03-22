@@ -23,6 +23,7 @@ public class Enemy : ShootableObject
     [SerializeField] private float shootAngle = 30;
     public LayerMask obstacleMask; //Obstacles that block enemy vision
 
+    [SerializeField] private float rotationSpeed = 100; //player targeting rotation speed when static
 
     #region Inherited methods
     // Start is called before the first frame update
@@ -59,6 +60,12 @@ public class Enemy : ShootableObject
             if (PlayerInSight(shootAngle))
             {
                 weapon.RemoteFire();
+            }
+
+            if (aiPath.reachedDestination)
+            {
+                Debug.Log("Target reached"); //To be replaced with code that updates to look at player
+                RotateToPlayer();
             }
             //else weapon.isFiring = false;
         }
@@ -99,5 +106,18 @@ public class Enemy : ShootableObject
         seeker.enabled = enable;
         aiPath.enabled = enable;
         destinationSetter.enabled = enable;
+    }
+
+    void RotateToPlayer()
+    {
+        Vector3 TargetPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
+
+        transform.rotation = Quaternion.RotateTowards(
+        transform.rotation,
+        Quaternion.LookRotation(TargetPosition - transform.position),
+        Time.deltaTime * rotationSpeed);
+
+        //
+       // Quaternion.x
     }
 }
