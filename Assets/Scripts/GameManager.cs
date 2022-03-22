@@ -6,11 +6,11 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager _instance;
-
+    
     //default values
-    [SerializeField] private int playerHealth = 100;
-    [SerializeField] private int rifleAmmo = 60; //Weapons start at half amount
-    [SerializeField] private int shotgunAmmo = 20;
+    [SerializeField] private int defaultPlayerHealth = 100;
+    [SerializeField] private int defaultRifleAmmo = 60; //Weapons start at half amount
+    [SerializeField] private int defaultShotgunAmmo = 20;
 
     //Max values 
     public int maxPlayerHealth = 100;
@@ -20,9 +20,9 @@ public class GameManager : MonoBehaviour
     //Both current and max values ignoring ammo in mag
 
     //current values
-    public int PlayerHealth { get => playerHealth; set => playerHealth = value; }
-    public int RifleAmmo { get => rifleAmmo; set => rifleAmmo = value; }
-    public int ShotgunAmmo { get => shotgunAmmo; set => shotgunAmmo = value; }
+    public int PlayerHealth;
+    public int RifleAmmo;
+    public int ShotgunAmmo;
 
     [SerializeField] private GameObject[] items;
 
@@ -41,6 +41,7 @@ public class GameManager : MonoBehaviour
         //Sets this to not be destroyed when reloading scene
         DontDestroyOnLoad(gameObject);
 
+        SetToDefault();
     }
 
     // Start is called before the first frame update
@@ -55,11 +56,11 @@ public class GameManager : MonoBehaviour
 
     }
 
-    void ResetToDefault() //Reset health and ammo to default
+    void SetToDefault() //Set or Reset health and ammo to default
     {
-        PlayerHealth = playerHealth;
-        RifleAmmo = rifleAmmo;
-        ShotgunAmmo = shotgunAmmo;
+        PlayerHealth = defaultPlayerHealth;
+        RifleAmmo = defaultRifleAmmo;
+        ShotgunAmmo = defaultShotgunAmmo;
     }
 
     //Ammo updating to be accessed from weapon or item drops - Could be cleaned up
@@ -67,23 +68,23 @@ public class GameManager : MonoBehaviour
     {
         if (weapon.Equals("Rifle"))
         {
-            rifleAmmo += amount;
+            RifleAmmo += amount;
 
-            if (rifleAmmo > maxRifleAmmo)
-                rifleAmmo = maxRifleAmmo;
-            else if (rifleAmmo < 0)
-                rifleAmmo = 0;
+            if (RifleAmmo > maxRifleAmmo)
+                RifleAmmo = maxRifleAmmo;
+            else if (RifleAmmo < 0)
+                RifleAmmo = 0;
         }
         else if (weapon.Equals("Shotgun"))
         {
-            shotgunAmmo += amount;
+            ShotgunAmmo += amount;
 
-            if (shotgunAmmo > maxShotgunAmmo)
+            if (ShotgunAmmo > maxShotgunAmmo)
                 ShotgunAmmo = maxShotgunAmmo;
-            else if (shotgunAmmo < 0)
-                shotgunAmmo = 0;
+            else if (ShotgunAmmo < 0)
+                ShotgunAmmo = 0;
         }
-        Debug.Log("Rifle ammo: " + rifleAmmo + "\t Shotgun ammo: " + shotgunAmmo);
+        Debug.Log("Rifle ammo: " + RifleAmmo + "\t Shotgun ammo: " + ShotgunAmmo);
     }
 
     public void UpdateHealth(int amount)
@@ -94,10 +95,10 @@ public class GameManager : MonoBehaviour
             PlayerHealth = maxPlayerHealth; //cap health at max
         }
 
-        else if (playerHealth <= 0)
+        else if (PlayerHealth <= 0)
         {
+            SetToDefault();
             SceneManager.LoadScene("GameOver");
-            ResetToDefault();
         }
 
 
@@ -142,9 +143,9 @@ public class GameManager : MonoBehaviour
     //Set item chances
     public void SetChances()
     {
-        healthChance = CalculateChance(playerHealth, maxPlayerHealth);
-        rifleAmmoChance = CalculateChance(rifleAmmo, maxRifleAmmo);
-        shotgunAmmoChance = CalculateChance(shotgunAmmo, maxShotgunAmmo);
+        healthChance = CalculateChance(PlayerHealth, maxPlayerHealth);
+        rifleAmmoChance = CalculateChance(RifleAmmo, maxRifleAmmo);
+        shotgunAmmoChance = CalculateChance(ShotgunAmmo, maxShotgunAmmo);
 
         //Subject to cleanup
         totalChance = healthChance + rifleAmmoChance + shotgunAmmoChance;
@@ -184,4 +185,4 @@ public class GameManager : MonoBehaviour
     }
 
     #endregion
-}
+}   
