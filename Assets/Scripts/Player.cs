@@ -16,8 +16,9 @@ public class Player : MonoBehaviour
         gameManager.UpdateHealth(amount);
     }
 
+    /*
     private void UpdateAmmo(object[] parameters)
     {
         gameManager.UpdateAmmo(parameters[0].ToString(), (int)parameters[1]); //Extract weapon name and value and pass it accordingly
-    }
+    }*/
 }

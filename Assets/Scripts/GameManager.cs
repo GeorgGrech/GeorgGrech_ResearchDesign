@@ -105,6 +105,34 @@ public class GameManager : MonoBehaviour
         Debug.Log("Player health now: " + PlayerHealth);
     }
 
+    //Used by Pickup.cs to check if value already at Max before attempting to increase and destroying pickup
+    public bool NotAtMax(string item)
+    {
+        int valueToCheck = 0;
+        int maxValue = 0;
+
+        switch (item)
+        {
+            case "Health":
+                valueToCheck = PlayerHealth;
+                maxValue = maxPlayerHealth;
+                break;
+            case "Rifle":
+                valueToCheck = RifleAmmo;
+                maxValue = maxRifleAmmo;
+                break;
+            case "Shotgun":
+                valueToCheck = ShotgunAmmo;
+                maxValue = maxShotgunAmmo;
+                break;
+        }
+
+        if (valueToCheck < maxValue)
+            return true;
+        else return false;
+    }
+
+
     #region Item Drop Selection
 
     /// <summary>
