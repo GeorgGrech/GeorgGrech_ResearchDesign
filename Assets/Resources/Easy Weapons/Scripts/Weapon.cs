@@ -327,6 +327,13 @@ public class Weapon : MonoBehaviour
 
 		// Update the fireTimer
 		fireTimer += Time.deltaTime;
+		//Debug.Log("Fire timer for "+weaponTag+": "+fireTimer);
+
+		/*
+		if(fireTimer >=0 && isReloading==true)
+		{
+			isReloading = false;
+		}*/
 
 		// CheckForUserInput() handles the firing based on user input
 		if (playerWeapon)
@@ -391,8 +398,8 @@ public class Weapon : MonoBehaviour
 			}
 		}
 
-        // Reload if the "Reload" button is pressed
-        if (Input.GetButtonDown("Reload"))
+		// Reload if the "Reload" button is pressed
+		if (Input.GetButtonDown("Reload") && fireTimer>=0)
 			Reload();
 
 		// If the weapon is semi-auto and the user lets up on the button, set canFire to true
@@ -737,10 +744,10 @@ public class Weapon : MonoBehaviour
     // Reload the weapon
     void Reload()
 	{
-		
-
+		Debug.Log("Reloading");
         if (GetReserveAmmo() > 0 && currentAmmo != ammoCapacity) //Stop reload 
         {
+			fireTimer = -reloadTime;
 			int roundsUsed;
 			roundsUsed = ammoCapacity - currentAmmo;
 			if (GetReserveAmmo() >= ammoCapacity)
@@ -751,19 +758,24 @@ public class Weapon : MonoBehaviour
 			else {
 				currentAmmo += GetReserveAmmo();
 			}
+
+			//Simple patch to fix currentAmmo greater than capacity bug (still unsolved)
+			if(currentAmmo > ammoCapacity)
+            {
+				currentAmmo = ammoCapacity;
+			}
+
 			UpdateManagerAmmo(-roundsUsed);
-			fireTimer = -reloadTime;
 			GetComponent<AudioSource>().PlayOneShot(reloadSound);
 
 			// Send a messsage so that users can do other actions whenever this happens
 			SendMessageUpwards("OnEasyWeaponsReload", SendMessageOptions.DontRequireReceiver);
 
         }
-
 	}
 
-    #region GameManager Data Methods
-    void UpdateManagerAmmo(int amount) //Updates amount in GameManager, checking if weapon is a player weapon first
+	#region GameManager Data Methods
+	void UpdateManagerAmmo(int amount) //Updates amount in GameManager, checking if weapon is a player weapon first
     {
         if (playerWeapon == true)
         {
