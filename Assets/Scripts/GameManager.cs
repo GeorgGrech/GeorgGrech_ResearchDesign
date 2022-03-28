@@ -97,8 +97,8 @@ public class GameManager : MonoBehaviour
 
         else if (PlayerHealth <= 0)
         {
-            SetToDefault();
             SceneManager.LoadScene("GameOver");
+            SetToDefault();
         }
 
 
@@ -149,14 +149,19 @@ public class GameManager : MonoBehaviour
     int rifleAmmoChance = 1;
     int shotgunAmmoChance = 1;
 
+    //Base chance for all items, to balance accordingly
+    [SerializeField] int baseHealthChance = 200;
+    [SerializeField] int baseRifleAmmoChance = 100;
+    [SerializeField] int baseShotgunAmmoChance = 100;
+
     //total Chance for items
     int totalChance;
 
     //Calculates chance as int from 1-baseChance by comparing current variable to the max amount
-    private int CalculateChance(int playerVariable, int variableMax)
+    private int CalculateChance(int playerVariable, int variableMax, int baseChance)
     {
+        //int baseChance = 100;
 
-        int baseChance = 100;
         float chanceRatio = 1 - ((float)playerVariable / variableMax); //Subtract from 1 for inverse chance
 
         int calculatedChance = (int)(baseChance * chanceRatio);
@@ -171,9 +176,9 @@ public class GameManager : MonoBehaviour
     //Set item chances
     public void SetChances()
     {
-        healthChance = CalculateChance(PlayerHealth, maxPlayerHealth);
-        rifleAmmoChance = CalculateChance(RifleAmmo, maxRifleAmmo);
-        shotgunAmmoChance = CalculateChance(ShotgunAmmo, maxShotgunAmmo);
+        healthChance = CalculateChance(PlayerHealth, maxPlayerHealth, baseHealthChance);
+        rifleAmmoChance = CalculateChance(RifleAmmo, maxRifleAmmo, baseRifleAmmoChance);
+        shotgunAmmoChance = CalculateChance(ShotgunAmmo, maxShotgunAmmo, baseShotgunAmmoChance);
 
         //Subject to cleanup
         totalChance = healthChance + rifleAmmoChance + shotgunAmmoChance;

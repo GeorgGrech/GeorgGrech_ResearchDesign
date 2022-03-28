@@ -21,4 +21,9 @@ public class Player : MonoBehaviour
     {
         gameManager.UpdateAmmo(parameters[0].ToString(), (int)parameters[1]); //Extract weapon name and value and pass it accordingly
     }*/
+
+    private void OnGUI()
+    {
+        GUI.Label(new Rect(Screen.width - 100, Screen.height - 30, 80, 20), "Health: " + gameManager.PlayerHealth.ToString());
+    }
 }
