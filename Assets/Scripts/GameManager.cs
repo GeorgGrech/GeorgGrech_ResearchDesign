@@ -6,6 +6,9 @@ using UnityEngine.SceneManagement;
 public class GameManager : MonoBehaviour
 {
     public static GameManager _instance;
+
+    [Tooltip("SMART ITEM DROP \nWhen disabled, all items will have equal chance of spawning from drops at all times. When enabled, chances for items to spawn is calculated whenever an item needs to drop from a crate or an enemy by comparing current player variables (Health and all ammo types) to the variable max.")]
+    [SerializeField] private bool DropAlgorithmEnable = true;
     
     //default values
     [SerializeField] private int defaultPlayerHealth = 100;
@@ -145,9 +148,9 @@ public class GameManager : MonoBehaviour
     /// </summary>
 
     //Chance counters for items
-    int healthChance = 1;
-    int rifleAmmoChance = 1;
-    int shotgunAmmoChance = 1;
+    int healthChance;
+    int rifleAmmoChance;
+    int shotgunAmmoChance;
 
     //Base chance for all items, to balance accordingly
     [SerializeField] int baseHealthChance = 200;
@@ -160,17 +163,22 @@ public class GameManager : MonoBehaviour
     //Calculates chance as int from 1-baseChance by comparing current variable to the max amount
     private int CalculateChance(int playerVariable, int variableMax, int baseChance)
     {
-        //int baseChance = 100;
+        if (DropAlgorithmEnable)
+        {
+            //int baseChance = 100;
 
-        float chanceRatio = 1 - ((float)playerVariable / variableMax); //Subtract from 1 for inverse chance
+            float chanceRatio = 1 - ((float)playerVariable / variableMax); //Subtract from 1 for inverse chance
 
-        int calculatedChance = (int)(baseChance * chanceRatio);
+            int calculatedChance = (int)(baseChance * chanceRatio);
 
-        if (calculatedChance == 0)
-            calculatedChance = 1; //Negates chance of all values being 0, potentially causing errors
+            if (calculatedChance == 0)
+                calculatedChance = 1; //Negates chance of all values being 0, potentially causing errors
 
-        //Console.WriteLine("Chance after int cast and 0 check: "+calculatedChance);
-        return calculatedChance;
+            //Console.WriteLine("Chance after int cast and 0 check: "+calculatedChance);
+            return calculatedChance;
+        }
+        else
+            return 1; //Return 1 for equal chance for all
     }
 
     //Set item chances
@@ -185,11 +193,11 @@ public class GameManager : MonoBehaviour
     }
 
     //Single drop method
-    public GameObject DropItem() //Change later to GameObject return to drop item from items[]
+    public GameObject DropItem()
     {
         SetChances();
 
-        int ranNum = Random.Range(0, totalChance); //rnd.Next to be replaced with random.range
+        int ranNum = Random.Range(0, totalChance); 
 
 
         //Needs efficiency cleanup
@@ -214,7 +222,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log("Ammo 2 dropped");
             }
         }
-        return items[selectedItem];
+        return items[selectedItem]; //Drop from items list
     }
 
     #endregion

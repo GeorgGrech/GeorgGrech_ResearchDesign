@@ -74,6 +74,8 @@ public class Weapon : MonoBehaviour
 	public int reserveAmmo;
 	public int maxAmmo;
 
+	public float enemyDamageMultiplier = .75f;
+
 	public string weaponTag;
 
 	#endregion
@@ -242,6 +244,12 @@ public class Weapon : MonoBehaviour
 				maxAmmo = gameManager.maxShotgunAmmo;
 			}
 			Debug.Log("This weapon is a player " + weaponTag);
+		}
+        else
+        {
+			Debug.Log(weaponTag + " power pre-multiplier: "+power);
+			power *= enemyDamageMultiplier;
+			Debug.Log(weaponTag + " power post-multiplier: " + power);
 		}
 		#endregion
 

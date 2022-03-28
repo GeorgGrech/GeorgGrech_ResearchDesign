@@ -34,7 +34,7 @@ public class Pickup : MonoBehaviour
                     //collision.gameObject.SendMessageUpwards("UpdateAmmo", parameters, SendMessageOptions.DontRequireReceiver); //pass variableIncrease as ammo to increase, alongside tag to indictate which ammo type
                 }
 
-                Destroy(gameObject); //Destroy after use
+                Destroy(transform.parent.gameObject); //Destroy after use
             }
         }
     }
