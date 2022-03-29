@@ -39,6 +39,11 @@ public class ShootableObject : MonoBehaviour
         }
     }*/
 
+    protected virtual void UpdatePlayerAccuracy()
+    {
+        gameManager.UpdateAccuracy(true);
+    }
+
     protected virtual void Killed()
     {
         isDying = true;

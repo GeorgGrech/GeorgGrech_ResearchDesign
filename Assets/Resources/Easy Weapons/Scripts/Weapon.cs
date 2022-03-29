@@ -559,7 +559,12 @@ public class Weapon : MonoBehaviour
 				
 				// Damage
 				hit.collider.gameObject.SendMessageUpwards("ChangeHealth", -damage, SendMessageOptions.DontRequireReceiver);
-				
+
+                if (playerWeapon)
+                {
+					hit.collider.gameObject.SendMessageUpwards("UpdatePlayerAccuracy", SendMessageOptions.DontRequireReceiver);
+				}
+
 				if (shooterAIEnabled)
 				{
 					hit.transform.SendMessageUpwards("Damage", damage / 100, SendMessageOptions.DontRequireReceiver);
@@ -723,6 +728,11 @@ public class Weapon : MonoBehaviour
 					hit.rigidbody.AddForce(ray.direction * power * forceMultiplier);
 				}
 			}
+            else
+            {
+				if(playerWeapon)
+					gameManager.UpdateAccuracy(false);
+            }
 		}
 
 		// Recoil

@@ -45,6 +45,11 @@ public class Enemy : ShootableObject
     {
         base.ChangeHealth(amount);
     }
+
+    protected override void UpdatePlayerAccuracy()
+    {
+        base.UpdatePlayerAccuracy();
+    }
     #endregion
 
     // Update is called once per frame

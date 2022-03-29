@@ -17,6 +17,11 @@ public class Crate : ShootableObject
         base.ChangeHealth(amount);
     }
 
+    protected override void UpdatePlayerAccuracy()
+    {
+        base.UpdatePlayerAccuracy();
+    }
+
     /*
     // Update is called once per frame
     protected override void Update()

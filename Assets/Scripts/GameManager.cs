@@ -226,4 +226,23 @@ public class GameManager : MonoBehaviour
     }
 
     #endregion
-}   
+
+    #region Dynamic Difficulty Adjustement
+    private int shotsFired =  0;
+    private int successfulShots = 0;
+    //private int failedShots;
+    public float accuracyRatio = 1;
+
+    public void UpdateAccuracy(bool shotSuccess)
+    {
+        shotsFired++;
+        if (shotSuccess)
+        {
+            successfulShots++;
+        }
+
+        accuracyRatio = (float)successfulShots / shotsFired;
+        Debug.Log("Succesful shots: " + successfulShots+ "Shots fired: " + shotsFired + " Accuracy: " + accuracyRatio);
+    }
+    #endregion
+}
