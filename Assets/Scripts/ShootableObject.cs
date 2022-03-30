@@ -41,7 +41,8 @@ public class ShootableObject : MonoBehaviour
 
     protected virtual void UpdatePlayerAccuracy()
     {
-        gameManager.UpdateAccuracy(true);
+        //gameManager.successfulShots++;
+        gameManager.UpdateAccuracy(true); //Update accuracy with successful shot
     }
 
     protected virtual void Killed()

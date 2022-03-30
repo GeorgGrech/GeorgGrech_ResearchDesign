@@ -59,7 +59,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    void SetToDefault() //Set or Reset health and ammo to default
+    public void SetToDefault() //Set or Reset health and ammo to default
     {
         PlayerHealth = defaultPlayerHealth;
         RifleAmmo = defaultRifleAmmo;
@@ -101,7 +101,7 @@ public class GameManager : MonoBehaviour
         else if (PlayerHealth <= 0)
         {
             SceneManager.LoadScene("GameOver");
-            SetToDefault();
+            //SetToDefault();
         }
 
 
@@ -228,19 +228,22 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Dynamic Difficulty Adjustement
-    private int shotsFired =  0;
-    private int successfulShots = 0;
+    public int shotsFired =  0;
+    public int successfulShots = 0;
     //private int failedShots;
     public float accuracyRatio = 1;
 
     public void UpdateAccuracy(bool shotSuccess)
     {
-        shotsFired++;
-        if (shotSuccess)
+        if (!shotSuccess)
+        {
+            shotsFired++;
+        }
+        else
         {
             successfulShots++;
         }
-
+        
         accuracyRatio = (float)successfulShots / shotsFired;
         Debug.Log("Succesful shots: " + successfulShots+ "Shots fired: " + shotsFired + " Accuracy: " + accuracyRatio);
     }

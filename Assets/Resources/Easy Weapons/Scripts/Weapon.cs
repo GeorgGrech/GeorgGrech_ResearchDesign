@@ -533,6 +533,12 @@ public class Weapon : MonoBehaviour
 		// Fire once for each shotPerRound value
 		for (int i = 0; i < shotPerRound; i++)
 		{
+			if (playerWeapon)
+			{
+				//gameManager.shotsFired++;
+				gameManager.UpdateAccuracy(false); //Update shotsFired and accuracy
+			}
+
 			// Calculate accuracy for this shot
 			float accuracyVary = (100 - currentAccuracy) / 1000;
 			Vector3 direction = raycastStartSpot.forward;
@@ -720,7 +726,7 @@ public class Weapon : MonoBehaviour
 						if (hitEffect != null)
                             Instantiate(hitEffect, hit.point, Quaternion.FromToRotation(Vector3.up, hit.normal));
 					}
-				}
+				}	
 
 				// Add force to the object that was hit
 				if (hit.rigidbody)
@@ -728,11 +734,12 @@ public class Weapon : MonoBehaviour
 					hit.rigidbody.AddForce(ray.direction * power * forceMultiplier);
 				}
 			}
+			/*
             else
             {
 				if(playerWeapon)
 					gameManager.UpdateAccuracy(false);
-            }
+            }*/
 		}
 
 		// Recoil
