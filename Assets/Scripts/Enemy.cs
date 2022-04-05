@@ -45,6 +45,9 @@ public class Enemy : ShootableObject
 
     protected override void ChangeHealth(int amount)
     {
+        
+        AStarEnable(true);//Follow the player when damaged even if not within regular distance
+
         base.ChangeHealth(amount);
     }
 
@@ -62,7 +65,7 @@ public class Enemy : ShootableObject
     // Update is called once per frame
     void Update()
     {
-        if (DetectPlayer()/*&& !stunActive && !isDying*/)
+        if (DetectPlayer() /*&& !stunActive && !isDying*/) //If player detected and not already followoing 
         {
             //StopAllCoroutines(); //Stop everything to follow player
             AStarEnable(true);
@@ -89,8 +92,6 @@ public class Enemy : ShootableObject
         {
             if (Vector3.Distance(transform.position, player.position) < detectDistance) //if within view distance
             {
-                isFollowing = true;
-                SetInCombat();
                 return true;
             }
             return false;
@@ -115,10 +116,16 @@ public class Enemy : ShootableObject
 
     public void AStarEnable(bool enable) //Enables tracking
     {
-        //isFollowingPlayer = enable;
-        seeker.enabled = enable;
-        aiPath.enabled = enable;
-        destinationSetter.enabled = enable;
+        if (!isFollowing)
+        {
+            isFollowing = true;
+            SetInCombat(); //Set GameManager in combat mode
+
+            //isFollowingPlayer = enable;
+            seeker.enabled = enable;
+            aiPath.enabled = enable;
+            destinationSetter.enabled = enable;
+        }
     }
 
     void RotateToPlayer()
