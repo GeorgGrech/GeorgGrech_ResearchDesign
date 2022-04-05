@@ -44,7 +44,7 @@ public class GameManager : MonoBehaviour
         //Sets this to not be destroyed when reloading scene
         DontDestroyOnLoad(gameObject);
 
-        SetToDefault();
+        SetupLevel();
     }
 
     // Start is called before the first frame update
@@ -59,11 +59,14 @@ public class GameManager : MonoBehaviour
 
     }
 
-    public void SetToDefault() //Set or Reset health and ammo to default
+    public void SetupLevel() //Setting appropriate variables when replaying level
     {
         PlayerHealth = defaultPlayerHealth;
         RifleAmmo = defaultRifleAmmo;
         ShotgunAmmo = defaultShotgunAmmo;
+
+        enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        inCombat = false;
     }
 
     //Ammo updating to be accessed from weapon or item drops - Could be cleaned up
@@ -228,24 +231,45 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region Dynamic Difficulty Adjustement
+    public bool inCombat = true; // True if in combat (followed by enemies)
+
     public int shotsFired =  0;
     public int successfulShots = 0;
     //private int failedShots;
     public float accuracyRatio = 1;
 
-    public void UpdateAccuracy(bool shotSuccess)
+    public GameObject[] enemies;
+
+
+    public void UpdateAccuracy(bool shotSuccess) 
     {
-        if (!shotSuccess)
+        if (inCombat) //Only take note of shots and accuracy if in combat 
         {
-            shotsFired++;
-        }
-        else
-        {
-            successfulShots++;
-        }
+            if (!shotSuccess)
+            {
+                shotsFired++;
+            }
+            else
+            {
+                successfulShots++;
+            }
         
-        accuracyRatio = (float)successfulShots / shotsFired;
-        Debug.Log("Succesful shots: " + successfulShots+ "Shots fired: " + shotsFired + " Accuracy: " + accuracyRatio);
+            accuracyRatio = (float)successfulShots / shotsFired;
+            Debug.Log("Succesful shots: " + successfulShots+ " | Shots fired: " + shotsFired + " | Accuracy: " + accuracyRatio);
+        }
+    }
+
+    public void checkInCombat()
+    {
+        foreach(GameObject enemy in enemies)
+        {
+            if(enemy.GetComponent<Enemy>().isFollowing == true)
+            {
+                inCombat = true;
+                break;
+            }
+        }
+        inCombat = false;
     }
     #endregion
 }

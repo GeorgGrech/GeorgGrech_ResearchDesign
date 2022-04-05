@@ -25,6 +25,8 @@ public class Enemy : ShootableObject
 
     [SerializeField] private float rotationSpeed = 100; //player targeting rotation speed when static
 
+    public bool isFollowing = false;
+
     #region Inherited methods
     // Start is called before the first frame update
     protected override void Start()
@@ -49,6 +51,11 @@ public class Enemy : ShootableObject
     protected override void UpdatePlayerAccuracy()
     {
         base.UpdatePlayerAccuracy();
+    }
+
+    protected override void SetInCombat()
+    {
+        base.SetInCombat();
     }
     #endregion
 
@@ -82,7 +89,8 @@ public class Enemy : ShootableObject
         {
             if (Vector3.Distance(transform.position, player.position) < detectDistance) //if within view distance
             {
-
+                isFollowing = true;
+                SetInCombat();
                 return true;
             }
             return false;
@@ -121,8 +129,6 @@ public class Enemy : ShootableObject
         transform.rotation,
         Quaternion.LookRotation(TargetPosition - transform.position),
         Time.deltaTime * rotationSpeed);
-
-        //
-       // Quaternion.x
+         
     }
 }

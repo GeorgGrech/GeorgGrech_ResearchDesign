@@ -17,7 +17,7 @@ public class LoseMenuManager : MonoBehaviour
 
     public void PlayAgain(string sceneName) //Set parameter in inspector, may be changed according to what scene is being tested
     {
-        GameObject.Find("GameManager").GetComponent<GameManager>().SetToDefault();
+        GameObject.Find("GameManager").GetComponent<GameManager>().SetupLevel();
 
         SceneManager.LoadScene(sceneName);
     }

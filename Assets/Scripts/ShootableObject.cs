@@ -51,6 +51,17 @@ public class ShootableObject : MonoBehaviour
         GameObject itemDrop = gameManager.DropItem();
         Instantiate(itemDrop,transform.position,transform.rotation);
 
+        if (this.transform.CompareTag("Enemy"))
+        {
+            gameManager.checkInCombat();
+        }
+
+
         Destroy(gameObject);
+    }
+
+    protected virtual void SetInCombat()
+    {
+        gameManager.inCombat = true;
     }
 }
