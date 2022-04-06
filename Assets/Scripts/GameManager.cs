@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
+        Debug.Log("Current difficulty ratio: "+DifficultyCalculate());
     }
 
     public void SetupLevel() //Setting appropriate variables when replaying level
@@ -270,6 +270,33 @@ public class GameManager : MonoBehaviour
             }
         }
         inCombat = false;
+    }
+
+    public float DifficultyCalculate()
+    {
+        float healthRatio = (float)PlayerHealth / maxPlayerHealth;
+
+
+        float rifleAmmoRatio = (float)RifleAmmo / maxRifleAmmo;
+        float shotgunAmmoRatio = (float)ShotgunAmmo / maxShotgunAmmo;
+
+        float ammoRatio = (rifleAmmoRatio + shotgunAmmoRatio) / 2; //Group ammo together to not majorly overshadow health
+
+        List<float> ratioVariables = new List<float>();
+        ratioVariables.Add(healthRatio);
+        ratioVariables.Add(ammoRatio);
+        ratioVariables.Add(accuracyRatio);
+
+        float ratioAdd = 0; //To be later divided for average
+
+        foreach(float variable in ratioVariables)
+        {
+            ratioAdd += variable;
+        }
+
+        float averageRatio = ratioAdd / ratioVariables.Count; //Average of all ratios, to be used as a difficulty ratio, 1 being the maximum difficulty
+
+        return averageRatio;
     }
     #endregion
 }

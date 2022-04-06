@@ -47,15 +47,16 @@ public class ShootableObject : MonoBehaviour
 
     protected virtual void Killed()
     {
+
         isDying = true;
-        GameObject itemDrop = gameManager.DropItem();
-        Instantiate(itemDrop,transform.position,transform.rotation);
 
         if (this.transform.CompareTag("Enemy"))
         {
             gameManager.checkInCombat();
         }
 
+        GameObject itemDrop = gameManager.DropItem();
+        Instantiate(itemDrop,transform.position,transform.rotation);
 
         Destroy(gameObject);
     }
