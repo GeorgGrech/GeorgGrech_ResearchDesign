@@ -23,7 +23,9 @@ public class Enemy : ShootableObject
     [SerializeField] private float shootAngle = 30;
     public LayerMask obstacleMask; //Obstacles that block enemy vision
 
-    [SerializeField] private float rotationSpeed = 100; //player targeting rotation speed when static
+    [SerializeField] private float baseRotationSpeed = 150; //player targeting rotation speed when static
+    [SerializeField] private float baseMovementSpeed = 7; //movement speed when moving to player
+    [SerializeField] private float modifiedMovementSpeed; //seperate modified variable to compare with aiPath.maxSpeed
 
     public bool isFollowing = false;
 
@@ -82,6 +84,11 @@ public class Enemy : ShootableObject
                 Debug.Log("Target reached"); //To be replaced with code that updates to look at player
                 RotateToPlayer();
             }
+            else if(aiPath.maxSpeed!=modifiedMovementSpeed)
+            {
+                modifiedMovementSpeed = baseMovementSpeed * gameManager.difficultyModifier;
+                aiPath.maxSpeed = modifiedMovementSpeed;
+            }
             //else weapon.isFiring = false;
         }
     }
@@ -130,6 +137,8 @@ public class Enemy : ShootableObject
 
     void RotateToPlayer()
     {
+        float rotationSpeed = baseRotationSpeed * gameManager.difficultyModifier; //multiply base rotation speed by the difficulty ratio
+
         Vector3 TargetPosition = new Vector3(player.position.x, transform.position.y, player.position.z);
 
         transform.rotation = Quaternion.RotateTowards(

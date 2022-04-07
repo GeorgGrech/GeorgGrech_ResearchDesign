@@ -74,7 +74,7 @@ public class Weapon : MonoBehaviour
 	public int reserveAmmo;
 	public int maxAmmo;
 
-	public float enemyDamageMultiplier = .75f;
+	//public float enemyDamageMultiplier = .75f;
 
 	public string weaponTag;
 
@@ -248,7 +248,9 @@ public class Weapon : MonoBehaviour
         else
         {
 			Debug.Log(weaponTag + " power pre-multiplier: "+power);
-			power *= enemyDamageMultiplier;
+			//power *= enemyDamageMultiplier;
+			power *= gameManager.difficultyModifier;
+
 			Debug.Log(weaponTag + " power post-multiplier: " + power);
 		}
 		#endregion
@@ -731,6 +733,7 @@ public class Weapon : MonoBehaviour
 				// Add force to the object that was hit
 				if (hit.rigidbody)
 				{
+					//Debug.Log("Power is: " + power);
 					hit.rigidbody.AddForce(ray.direction * power * forceMultiplier);
 				}
 			}

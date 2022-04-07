@@ -7,9 +7,6 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager _instance;
 
-    [Tooltip("SMART ITEM DROP \nWhen disabled, all items will have equal chance of spawning from drops at all times. When enabled, chances for items to spawn is calculated whenever an item needs to drop from a crate or an enemy by comparing current player variables (Health and all ammo types) to the variable max.")]
-    [SerializeField] private bool DropAlgorithmEnable = true;
-    
     //default values
     [SerializeField] private int defaultPlayerHealth = 100;
     [SerializeField] private int defaultRifleAmmo = 60; //Weapons start at half amount
@@ -56,7 +53,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Debug.Log("Current difficulty ratio: "+DifficultyCalculate());
+        //Debug.Log("Current difficulty ratio: " + DifficultyCalculate());
     }
 
     public void SetupLevel() //Setting appropriate variables when replaying level
@@ -67,6 +64,8 @@ public class GameManager : MonoBehaviour
 
         enemies = GameObject.FindGameObjectsWithTag("Enemy");
         inCombat = false;
+
+        difficultyUpateCoroutine = StartCoroutine(UpdateDifficulty());
     }
 
     //Ammo updating to be accessed from weapon or item drops - Could be cleaned up
@@ -103,6 +102,7 @@ public class GameManager : MonoBehaviour
 
         else if (PlayerHealth <= 0)
         {
+            StopCoroutine(difficultyUpateCoroutine); //Disable difficulty corutine when not needed
             SceneManager.LoadScene("GameOver");
             //SetToDefault();
         }
@@ -149,6 +149,9 @@ public class GameManager : MonoBehaviour
     /// The algorithm picks a number from 0 - totalChance, then the drop is generated depending on what item range the generated number falls in.
     /// 
     /// </summary>
+
+    [Tooltip("SMART ITEM DROP \nWhen disabled, all items will have equal chance of spawning from drops at all times. When enabled, chances for items to spawn is calculated whenever an item needs to drop from a crate or an enemy by comparing current player variables (Health and all ammo types) to the variable max.")]
+    [SerializeField] private bool DropAlgorithmEnable = true;
 
     //Chance counters for items
     int healthChance;
@@ -200,7 +203,7 @@ public class GameManager : MonoBehaviour
     {
         SetChances();
 
-        int ranNum = Random.Range(0, totalChance); 
+        int ranNum = Random.Range(0, totalChance);
 
 
         //Needs efficiency cleanup
@@ -233,15 +236,22 @@ public class GameManager : MonoBehaviour
     #region Dynamic Difficulty Adjustement
     public bool inCombat = true; // True if in combat (followed by enemies)
 
-    public int shotsFired =  0;
+    public int shotsFired = 0;
     public int successfulShots = 0;
     //private int failedShots;
     public float accuracyRatio = 1;
 
     public GameObject[] enemies;
 
+    [SerializeField] private bool ddaUseHealth = true;
+    [SerializeField] private bool ddaUseAmmo = true;
+    [SerializeField] private bool ddaUseAccuracy = true;
 
-    public void UpdateAccuracy(bool shotSuccess) 
+    public float difficultyModifier;
+    [SerializeField] private float difficultyUpdateInterval = .5f;
+    private Coroutine difficultyUpateCoroutine;
+
+    public void UpdateAccuracy(bool shotSuccess)
     {
         if (inCombat) //Only take note of shots and accuracy if in combat 
         {
@@ -253,23 +263,36 @@ public class GameManager : MonoBehaviour
             {
                 successfulShots++;
             }
-        
+
             accuracyRatio = (float)successfulShots / shotsFired;
-            Debug.Log("Succesful shots: " + successfulShots+ " | Shots fired: " + shotsFired + " | Accuracy: " + accuracyRatio);
+            Debug.Log("Succesful shots: " + successfulShots + " | Shots fired: " + shotsFired + " | Accuracy: " + accuracyRatio);
         }
     }
 
-    public void checkInCombat()
+    public void CheckInCombat()
     {
-        foreach(GameObject enemy in enemies)
+        foreach (GameObject enemy in enemies)
         {
-            if(enemy.GetComponent<Enemy>().isFollowing == true)
+            if (enemy != null)
             {
-                inCombat = true;
-                break;
+                if (enemy.GetComponent<Enemy>().isFollowing == true)
+                {
+                    inCombat = true;
+                    break;
+                }
             }
         }
         inCombat = false;
+    }
+
+    private IEnumerator UpdateDifficulty()
+    {
+        while (true)
+        {
+            difficultyModifier = DifficultyCalculate();
+            Debug.Log("Difficulty Modifier: " + difficultyModifier);
+            yield return new WaitForSeconds(difficultyUpdateInterval);
+        }
     }
 
     public float DifficultyCalculate()
@@ -283,9 +306,15 @@ public class GameManager : MonoBehaviour
         float ammoRatio = (rifleAmmoRatio + shotgunAmmoRatio) / 2; //Group ammo together to not majorly overshadow health
 
         List<float> ratioVariables = new List<float>();
-        ratioVariables.Add(healthRatio);
-        ratioVariables.Add(ammoRatio);
-        ratioVariables.Add(accuracyRatio);
+
+        if(ddaUseHealth)
+            ratioVariables.Add(healthRatio);
+
+        if (ddaUseAmmo)
+            ratioVariables.Add(ammoRatio);
+
+        if (ddaUseAccuracy)
+            ratioVariables.Add(accuracyRatio);
 
         float ratioAdd = 0; //To be later divided for average
 

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ShootableObject : MonoBehaviour
 {
-    private GameManager gameManager;
+    public GameManager gameManager;
 
     protected int health;
     private bool isDying = false;
@@ -52,7 +52,7 @@ public class ShootableObject : MonoBehaviour
 
         if (this.transform.CompareTag("Enemy"))
         {
-            gameManager.checkInCombat();
+            gameManager.CheckInCombat();
         }
 
         GameObject itemDrop = gameManager.DropItem();
