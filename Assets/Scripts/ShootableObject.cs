@@ -52,7 +52,7 @@ public class ShootableObject : MonoBehaviour
 
         if (this.transform.CompareTag("Enemy"))
         {
-            gameManager.CheckInCombat();
+            gameManager.CheckInCombat(this.name);
         }
 
         GameObject itemDrop = gameManager.DropItem();

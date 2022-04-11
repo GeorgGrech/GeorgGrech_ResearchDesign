@@ -270,20 +270,25 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void CheckInCombat()
+    public void CheckInCombat(string triggerEnemyName)
     {
         foreach (GameObject enemy in enemies)
         {
             if (enemy != null)
             {
+                if(enemy.name == triggerEnemyName) //If enemy that triggered method 
+                {
+                    continue; //ignore isFollowingStatus
+                }
+
                 if (enemy.GetComponent<Enemy>().isFollowing == true)
                 {
                     inCombat = true;
                     break;
                 }
             }
-        }
         inCombat = false;
+        }   
     }
 
     private IEnumerator UpdateDifficulty()
