@@ -42,7 +42,10 @@ public class ShootableObject : MonoBehaviour
     protected virtual void UpdatePlayerAccuracy()
     {
         //gameManager.successfulShots++;
-        gameManager.UpdateAccuracy(true); //Update accuracy with successful shot
+        if (gameManager.shotsFired > 0) //Prevents shotsFired=0 & succesfulShots=1 that causes divide by 0
+        {
+            gameManager.UpdateAccuracy(true); //Update accuracy with successful shot
+        }
     }
 
     protected virtual void Killed()
