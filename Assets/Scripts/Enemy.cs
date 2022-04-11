@@ -43,6 +43,8 @@ public class Enemy : ShootableObject
         destinationSetter = GetComponent<AIDestinationSetter>();
 
         destinationSetter.target = player;
+
+        gameManager.enemies.Add(gameObject);
     }
 
     protected override void ChangeHealth(int amount)

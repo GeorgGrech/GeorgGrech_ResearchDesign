@@ -62,7 +62,8 @@ public class GameManager : MonoBehaviour
         RifleAmmo = defaultRifleAmmo;
         ShotgunAmmo = defaultShotgunAmmo;
 
-        enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        enemies.Clear(); //Clear list before use in level
+        //enemies = GameObject.FindGameObjectsWithTag("Enemy");
         inCombat = false;
 
         difficultyUpateCoroutine = StartCoroutine(UpdateDifficulty());
@@ -241,7 +242,7 @@ public class GameManager : MonoBehaviour
     //private int failedShots;
     public float accuracyRatio = 1;
 
-    public GameObject[] enemies;
+    public List<GameObject> enemies;
 
     [SerializeField] private bool ddaUseHealth = true;
     [SerializeField] private bool ddaUseAmmo = true;
