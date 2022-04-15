@@ -20,7 +20,9 @@ public class Enemy : ShootableObject
 
     //Player detection variables
     [SerializeField] private float detectDistance = 10;
+    [SerializeField] private float viewDistance = 20;
     [SerializeField] private float shootAngle = 30;
+    [SerializeField] private float viewAngle = 100;
     public LayerMask obstacleMask; //Obstacles that block enemy vision
 
     [SerializeField] private float baseRotationSpeed = 150; //player targeting rotation speed when static
@@ -99,11 +101,23 @@ public class Enemy : ShootableObject
     {
         if (player) //if player hasn't been destroyed
         {
-            if (Vector3.Distance(transform.position, player.position) < detectDistance) //if within view distance
+            if (Vector3.Distance(transform.position, player.position) < viewDistance) //if within view distance
             {
-                return true;
-            }
+
+                if (PlayerInSight(viewAngle))
+                {
+                    Debug.Log("Enemy Visual Detection");
+                    return true;
+                }
+
+                if (Vector3.Distance(transform.position, player.position) < detectDistance) //if within view distance
+                {
+                    Debug.Log("Enemy Proximity Detection");
+                    return true;
+                }
+
             return false;
+            }
         }
         return false;
     }
