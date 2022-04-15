@@ -244,11 +244,13 @@ public class GameManager : MonoBehaviour
 
     public List<GameObject> enemies;
 
+    [SerializeField] private bool enableDDA = true;
     [SerializeField] private bool ddaUseHealth = true;
     [SerializeField] private bool ddaUseAmmo = true;
     [SerializeField] private bool ddaUseAccuracy = true;
 
-    public float difficultyModifier;
+    public float difficultyModifier; //Modifier to manipulate enemy values, changing game difficulty 
+    [SerializeField] float constantDifficultyModifier = .7f; //Constant difficulty modifier to be used when DDA disabled
     [SerializeField] private float difficultyUpdateInterval = .5f;
     private Coroutine difficultyUpateCoroutine;
 
@@ -295,7 +297,14 @@ public class GameManager : MonoBehaviour
     {
         while (true)
         {
-            difficultyModifier = DifficultyCalculate();
+            if (enableDDA)
+            {
+                difficultyModifier = DifficultyCalculate();
+            }
+            else
+            {
+                difficultyModifier = constantDifficultyModifier;
+            }
             Debug.Log("Difficulty Modifier: " + difficultyModifier);
             yield return new WaitForSeconds(difficultyUpdateInterval);
         }
