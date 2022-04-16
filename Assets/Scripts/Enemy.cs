@@ -25,6 +25,8 @@ public class Enemy : ShootableObject
     [SerializeField] private float viewAngle = 100;
     public LayerMask obstacleMask; //Obstacles that block enemy vision
 
+    [SerializeField] private Transform viewSpot;
+
     [SerializeField] private float baseRotationSpeed = 150; //player targeting rotation speed when static
     [SerializeField] private float baseMovementSpeed = 7; //movement speed when moving to player
     [SerializeField] private float modifiedMovementSpeed; //seperate modified variable to compare with aiPath.maxSpeed
@@ -128,7 +130,7 @@ public class Enemy : ShootableObject
         float angleBetweenPlayer = Vector3.Angle(transform.forward, dirToPlayer);
         if (angleBetweenPlayer < angle / 2f) //Within the viewing angle
         {
-            if (!Physics.Linecast(transform.position, player.position, obstacleMask))//if view to player is not being obstructed by obstacle
+            if (!Physics.Linecast(viewSpot.position, player.position, obstacleMask))//if view to player is not being obstructed by obstacle
             {
                 Debug.Log("Player in sight");
                 return true;
