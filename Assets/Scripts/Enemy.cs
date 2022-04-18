@@ -32,6 +32,7 @@ public class Enemy : ShootableObject
     [SerializeField] private float modifiedMovementSpeed; //seperate modified variable to compare with aiPath.maxSpeed
 
     public bool isFollowing = false;
+    public bool isTracking = false;
 
     #region Inherited methods
     // Start is called before the first frame update
@@ -53,8 +54,10 @@ public class Enemy : ShootableObject
 
     protected override void ChangeHealth(int amount)
     {
-        
-        AStarEnable(true);//Follow the player when damaged even if not within regular distance
+        /*if (!isFollowing)
+        {
+            StartCoroutine(MovePause());//Follow the player when damaged even if not within regular distance
+        }*/
 
         base.ChangeHealth(amount);
     }
@@ -76,7 +79,10 @@ public class Enemy : ShootableObject
         if (DetectPlayer() /*&& !stunActive && !isDying*/) //If player detected and not already followoing 
         {
             //StopAllCoroutines(); //Stop everything to follow player
-            AStarEnable(true);
+            if (!isFollowing)
+            {
+                StartCoroutine(MovePause());
+            }
             //animator.SetBool("isFollowing", true);
 
 
@@ -85,7 +91,7 @@ public class Enemy : ShootableObject
                 weapon.RemoteFire();
             }
 
-            if (aiPath.reachedDestination)
+            if (aiPath.reachedDestination || isTracking)
             {
                 Debug.Log("Target reached"); //To be replaced with code that updates to look at player
                 RotateToPlayer();
@@ -106,17 +112,25 @@ public class Enemy : ShootableObject
             if (Vector3.Distance(transform.position, player.position) < viewDistance) //if within view distance
             {
 
-                if (PlayerInSight(viewAngle))
+                if (PlayerInSight(viewAngle) //if within viewing angle
+                    || (Vector3.Distance(transform.position, player.position) < detectDistance) //if within detection distance
+                    || (health < objectHealth)) //if damaged
                 {
-                    Debug.Log("Enemy Visual Detection");
+                    //Debug.Log("Enemy Visual Detection");
                     return true;
                 }
 
-                if (Vector3.Distance(transform.position, player.position) < detectDistance) //if within view distance
+                /*
+                if (Vector3.Distance(transform.position, player.position) < detectDistance) //if within detection distance
                 {
                     Debug.Log("Enemy Proximity Detection");
                     return true;
                 }
+
+                if (health < objectHealth) //if damaged
+                {
+                    return true;
+                }*/
 
             return false;
             }
@@ -141,16 +155,16 @@ public class Enemy : ShootableObject
 
     public void AStarEnable(bool enable) //Enables tracking
     {
-        if (!isFollowing)
-        {
-            isFollowing = true;
+        //if (!isFollowing)
+        //{
             SetInCombat(); //Set GameManager in combat mode
 
             //isFollowingPlayer = enable;
             seeker.enabled = enable;
             aiPath.enabled = enable;
             destinationSetter.enabled = enable;
-        }
+            //StartCoroutine(MovePause());
+        //}
     }
 
     void RotateToPlayer()
@@ -164,5 +178,36 @@ public class Enemy : ShootableObject
         Quaternion.LookRotation(TargetPosition - transform.position),
         Time.deltaTime * rotationSpeed);
          
+    }
+
+    private IEnumerator MovePause()
+    {
+        isFollowing = true;
+
+        /*while (true)
+        {
+            //yield return null;
+            aiPath.maxSpeed = 0;
+            isTracking = true;
+            Debug.Log("Enemy state: Tracking");
+            yield return new WaitForSeconds(Random.Range(2, 5));
+            aiPath.maxSpeed = modifiedMovementSpeed;
+            isTracking = false;
+            Debug.Log("Enemy state: Following");
+            yield return new WaitForSeconds(Random.Range(2, 5));
+        }*/
+
+        while (true)
+        {
+            //yield return null;
+            AStarEnable(false);
+            isTracking = true;
+            Debug.Log("Enemy state: Tracking");
+            yield return new WaitForSeconds(Random.Range(1, 4));
+            AStarEnable(true);
+            isTracking = false;
+            Debug.Log("Enemy state: Following");
+            yield return new WaitForSeconds(Random.Range(3, 5)); //Longer follow time
+        }
     }
 }
