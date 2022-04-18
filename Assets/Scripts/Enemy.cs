@@ -31,8 +31,12 @@ public class Enemy : ShootableObject
     [SerializeField] private float baseMovementSpeed = 7; //movement speed when moving to player
     [SerializeField] private float modifiedMovementSpeed; //seperate modified variable to compare with aiPath.maxSpeed
 
-    public bool isFollowing = false;
-    public bool isTracking = false;
+
+    public bool isFollowing = false; //enabled when player detected 
+    public bool isTracking = false; //enabled only when enemy pauses for stationary aim
+
+    public bool canFire = false; //dictates when enemy is firing or cooling down if player in sight
+    //public Coroutine fireCoroutine;
 
     #region Inherited methods
     // Start is called before the first frame update
@@ -81,15 +85,19 @@ public class Enemy : ShootableObject
             //StopAllCoroutines(); //Stop everything to follow player
             if (!isFollowing)
             {
-                StartCoroutine(MovePause());
+                StartCoroutine(FollowPlayer());
             }
             //animator.SetBool("isFollowing", true);
 
 
-            if (PlayerInSight(shootAngle))
+            if (PlayerInSight(shootAngle) && canFire)
             {
                 weapon.RemoteFire();
             }
+            /*else if(fireCoroutine!=null)
+            {
+                StopCoroutine(fireCoroutine);
+            }*/
 
             if (aiPath.reachedDestination || isTracking)
             {
@@ -180,9 +188,10 @@ public class Enemy : ShootableObject
          
     }
 
-    private IEnumerator MovePause()
+    private IEnumerator FollowPlayer()
     {
         isFollowing = true;
+        StartCoroutine(BurstFiring());
 
         /*while (true)
         {
@@ -208,6 +217,19 @@ public class Enemy : ShootableObject
             isTracking = false;
             Debug.Log("Enemy state: Following");
             yield return new WaitForSeconds(Random.Range(3, 5)); //Longer follow time
+        }
+    }
+
+    private IEnumerator BurstFiring()
+    {
+        while (true)
+        {
+            canFire = true;
+            Debug.Log("Enemy firing state: Firing");
+            yield return new WaitForSeconds(1);
+            canFire = false;
+            Debug.Log("Enemy firing state: Cooling down");
+            yield return new WaitForSeconds(2);
         }
     }
 }
