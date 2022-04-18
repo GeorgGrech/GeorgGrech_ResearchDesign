@@ -245,14 +245,14 @@ public class Weapon : MonoBehaviour
 			}
 			Debug.Log("This weapon is a player " + weaponTag);
 		}
-        else
+        /*else
         {
 			Debug.Log(weaponTag + " power pre-multiplier: "+power);
 			//power *= enemyDamageMultiplier;
 			power *= gameManager.difficultyModifier;
 
 			Debug.Log(weaponTag + " power post-multiplier: " + power);
-		}
+		}*/
 		#endregion
 
 
@@ -558,13 +558,24 @@ public class Weapon : MonoBehaviour
 			if (Physics.Raycast(ray, out hit, range))
 			{
 				// Warmup heat
-				float damage = power;
+				float damage;
+
+				if (playerWeapon)
+				{
+					damage = power;
+				}
+                else
+                {
+					damage = power * gameManager.difficultyModifier;
+					Debug.Log("Enemy target hit with damage of " + damage);
+				}
 				/*if (warmup)
+				 * 
 				{
 					damage *= heat * powerMultiplier;
 					heat = 0.0f;
 				}*/
-				
+
 				// Damage
 				hit.collider.gameObject.SendMessageUpwards("ChangeHealth", -damage, SendMessageOptions.DontRequireReceiver);
 

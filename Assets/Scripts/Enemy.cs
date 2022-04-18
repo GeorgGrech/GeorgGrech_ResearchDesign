@@ -27,7 +27,7 @@ public class Enemy : ShootableObject
 
     [SerializeField] private Transform viewSpot;
 
-    [SerializeField] private float baseRotationSpeed = 150; //player targeting rotation speed when static
+    [SerializeField] private float baseRotationSpeed = 200; //player targeting rotation speed when static
     [SerializeField] private float baseMovementSpeed = 7; //movement speed when moving to player
     [SerializeField] private float modifiedMovementSpeed; //seperate modified variable to compare with aiPath.maxSpeed
 
@@ -229,7 +229,7 @@ public class Enemy : ShootableObject
             yield return new WaitForSeconds(1);
             canFire = false;
             Debug.Log("Enemy firing state: Cooling down");
-            yield return new WaitForSeconds(2);
+            yield return new WaitForSeconds(1);
         }
     }
 }
