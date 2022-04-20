@@ -212,7 +212,7 @@ public class Enemy : ShootableObject
             AStarEnable(false);
             isTracking = true;
             Debug.Log("Enemy state: Tracking");
-            yield return new WaitForSeconds(Random.Range(1, 4));
+            yield return new WaitForSeconds(Random.Range(1, 3));
             AStarEnable(true);
             isTracking = false;
             Debug.Log("Enemy state: Following");
@@ -226,7 +226,7 @@ public class Enemy : ShootableObject
         {
             canFire = true;
             Debug.Log("Enemy firing state: Firing");
-            yield return new WaitForSeconds(1);
+            yield return new WaitForSeconds(2);
             canFire = false;
             Debug.Log("Enemy firing state: Cooling down");
             yield return new WaitForSeconds(1);

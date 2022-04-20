@@ -56,10 +56,19 @@ public class ShootableObject : MonoBehaviour
         if (this.transform.CompareTag("Enemy"))
         {
             gameManager.CheckInCombat(this.name);
+
+            int ranNum = Random.Range(0, 3);
+            if (ranNum == 0) //if Enemy, drop is 1/3 chance
+            {
+                DropItem();
+            }
+        }
+        else //if Crate, drop awlays
+        {
+            DropItem();
         }
 
-        GameObject itemDrop = gameManager.DropItem();
-        Instantiate(itemDrop,transform.position,transform.rotation);
+        
 
         Destroy(gameObject);
     }
@@ -67,5 +76,11 @@ public class ShootableObject : MonoBehaviour
     protected virtual void SetInCombat()
     {
         gameManager.inCombat = true;
+    }
+
+    private void DropItem()
+    {
+        GameObject itemDrop = gameManager.DropItem();
+        Instantiate(itemDrop, transform.position, transform.rotation);
     }
 }
