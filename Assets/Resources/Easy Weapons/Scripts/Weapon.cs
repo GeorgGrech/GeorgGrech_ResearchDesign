@@ -806,6 +806,7 @@ public class Weapon : MonoBehaviour
 
 			UpdateManagerAmmo(-roundsUsed);
 			GetComponent<AudioSource>().PlayOneShot(reloadSound);
+			GetComponent<Animation>().Play();
 
 			// Send a messsage so that users can do other actions whenever this happens
 			SendMessageUpwards("OnEasyWeaponsReload", SendMessageOptions.DontRequireReceiver);
