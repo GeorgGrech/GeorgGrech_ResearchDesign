@@ -74,6 +74,10 @@ public class Weapon : MonoBehaviour
 	public int reserveAmmo;
 	public int maxAmmo;
 
+	//For resetting position in case of switching mid reload
+	public Vector3 basePosition;
+	public Quaternion baseRotation;
+
 	//public float enemyDamageMultiplier = .75f;
 
 	public string weaponTag;
@@ -325,6 +329,13 @@ public class Weapon : MonoBehaviour
 
 	}
 
+	//Save position and rotation before anything else
+	void Awake(){
+		basePosition = this.transform.localPosition;
+		baseRotation = this.transform.localRotation;
+		Debug.Log("basePosition: "+basePosition+" baseRotation: "+baseRotation);
+	}
+
 	// Update is called once per frame
 	void Update()
 	{
@@ -361,6 +372,11 @@ public class Weapon : MonoBehaviour
 			weaponModel.transform.position = Vector3.Lerp(weaponModel.transform.position, transform.position, recoilRecoveryRate * Time.deltaTime);
 			weaponModel.transform.rotation = Quaternion.Lerp(weaponModel.transform.rotation, transform.rotation, recoilRecoveryRate * Time.deltaTime);
 		}
+	}
+
+	public void ResetPosition(){
+		transform.localPosition = basePosition;
+		transform.localRotation = baseRotation;
 	}
 
 	// Checks for user input to use the weapons - only if this weapon is player-controlled

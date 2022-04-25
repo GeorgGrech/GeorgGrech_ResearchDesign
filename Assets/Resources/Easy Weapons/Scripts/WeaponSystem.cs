@@ -82,6 +82,8 @@ public class WeaponSystem : MonoBehaviour
 
 		// Activate the one weapon that we want
 		weapons[index].SetActive(true);
+
+		weapons[index].GetComponent<Weapon>().ResetPosition();
 	}
 
 	public void NextWeapon()
