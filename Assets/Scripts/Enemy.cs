@@ -6,6 +6,7 @@ using Pathfinding;
 public class Enemy : ShootableObject
 {
     public Transform player;
+    public Transform playerCamera;
 
     [SerializeField] private int objectHealth = 100;
 
@@ -46,6 +47,7 @@ public class Enemy : ShootableObject
         base.Start();
 
         player = GameObject.FindGameObjectWithTag("Player").transform; //Find player
+        playerCamera = player.transform.GetChild(0).Find("PlayerCamera"); //Find player camera for use in hiding
         weapon = weaponObject.GetComponent<Weapon>();
         seeker = GetComponent<Seeker>();
         aiPath = GetComponent<AIPath>();
@@ -152,7 +154,7 @@ public class Enemy : ShootableObject
         float angleBetweenPlayer = Vector3.Angle(transform.forward, dirToPlayer);
         if (angleBetweenPlayer < angle / 2f) //Within the viewing angle
         {
-            if (!Physics.Linecast(viewSpot.position, player.position, obstacleMask))//if view to player is not being obstructed by obstacle
+            if (!Physics.Linecast(viewSpot.position, playerCamera.position, obstacleMask))//if view to player is not being obstructed by obstacle (Camera used to dictate by player POV)
             {
                 Debug.Log("Player in sight");
                 return true;
@@ -226,7 +228,7 @@ public class Enemy : ShootableObject
         {
             canFire = true;
             Debug.Log("Enemy firing state: Firing");
-            yield return new WaitForSeconds(2);
+            yield return new WaitForSeconds(1);
             canFire = false;
             Debug.Log("Enemy firing state: Cooling down");
             yield return new WaitForSeconds(1);

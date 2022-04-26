@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
         //Sets this to not be destroyed when reloading scene
         DontDestroyOnLoad(gameObject);
 
-        SetupLevel();
+        SetupLevel(false);
     }
 
     // Start is called before the first frame update
@@ -56,7 +56,7 @@ public class GameManager : MonoBehaviour
         //Debug.Log("Current difficulty ratio: " + DifficultyCalculate());
     }
 
-    public void SetupLevel() //Setting appropriate variables when replaying level
+    public void SetupLevel(bool resetAccuracy) //Setting appropriate variables when replaying level
     {
         PlayerHealth = defaultPlayerHealth;
         RifleAmmo = defaultRifleAmmo;
@@ -65,6 +65,14 @@ public class GameManager : MonoBehaviour
         enemies.Clear(); //Clear list before use in level
         //enemies = GameObject.FindGameObjectsWithTag("Enemy");
         inCombat = false;
+
+        if (resetAccuracy)
+        {
+            accuracyRatio = 1;
+            shotsFired = 0;
+            successfulShots = 0;
+        }
+
 
         difficultyUpateCoroutine = StartCoroutine(UpdateDifficulty());
     }
