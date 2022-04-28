@@ -1,7 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using System.IO;
+
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
+
 
 public class GameManager : MonoBehaviour
 {
@@ -45,14 +52,12 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
         //Sets this to not be destroyed when reloading scene
         DontDestroyOnLoad(gameObject);
-
-        SetupLevel(false);
     }
 
     // Start is called before the first frame update
     void Start()
     {
-
+        SetupLevel(true);
     }
 
     // Update is called once per frame
@@ -64,8 +69,12 @@ public class GameManager : MonoBehaviour
     public void SetupLevel(bool resetEntirely) //Setting appropriate variables when replaying level
     {
         curentlyPlaying = true;
-
         isDying = false;
+
+        if(!isTrackingData) //If not already tracking data
+        {
+            StartCoroutine(AddKeyframes()); //Start tracking data for CSV
+        }
 
         PlayerHealth = defaultPlayerHealth;
         RifleAmmo = defaultRifleAmmo;
@@ -372,5 +381,85 @@ public class GameManager : MonoBehaviour
     #endregion
 
     #region CSV Data tracking
+    public bool isTrackingData;
+
+    [System.Serializable]
+    public class KeyFrame
+    {
+        public float Time;
+        public int PlayerHealth; //Just PlayerHealth value for testing
+
+        public KeyFrame() { }
+
+        public KeyFrame(int playerhealth, float time)
+        {
+            PlayerHealth = playerhealth;
+            Time = time;
+        }
+    }
+
+    private List<KeyFrame> keyFrames = new List<KeyFrame>(10000);
+
+    private IEnumerator AddKeyframes()
+    {
+        isTrackingData = true;
+        Debug.Log("Data tracking: Started");
+        while (curentlyPlaying)
+        {
+            Debug.Log("Data tracking: Keyframe added");
+            keyFrames.Add(new KeyFrame(PlayerHealth, Time.time));
+            yield return new WaitForSeconds(1);
+        }
+        isTrackingData = false;
+
+        SaveToFile();
+        Debug.Log("Data tracking: Saving Data");
+    }
+
+    public string ToCSV()
+    {
+        var sb = new StringBuilder("Time,PlayerHealth");
+        foreach (var frame in keyFrames)
+        {
+            sb.Append('\n')
+                .Append(frame.Time.ToString()).Append(',')
+                .Append(frame.PlayerHealth.ToString());
+        }
+
+        return sb.ToString();
+    }
+
+public void SaveToFile()
+{
+    // Use the CSV generation from before
+    var content = ToCSV();
+
+    // The target file path e.g.
+#if UNITY_EDITOR
+    var folder = Application.streamingAssetsPath;
+
+    if (!Directory.Exists(folder))
+            Directory.CreateDirectory(folder);
+#else
+    var folder = Application.persistentDataPath;
+#endif
+
+    var filePath = Path.Combine(folder, "export.csv");
+
+    using (var writer = new StreamWriter(filePath, false))
+    {
+        writer.Write(content);
+    }
+
+    // Or just
+    //File.WriteAllText(content);
+
+    Debug.Log($"CSV file written to \"{filePath}\"");
+
+#if UNITY_EDITOR
+    AssetDatabase.Refresh();
+#endif
+}
+
     #endregion
 }
