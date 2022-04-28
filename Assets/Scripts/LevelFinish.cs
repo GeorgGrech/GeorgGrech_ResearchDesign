@@ -9,6 +9,9 @@ public class LevelFinish : MonoBehaviour
     {
         if(other.name == "Player")
         {
+
+            GameObject.Find("GameManager").GetComponent<GameManager>().curentlyPlaying = false;
+
             SceneManager.LoadScene("WinScene");
         }
     }

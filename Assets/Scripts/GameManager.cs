@@ -24,6 +24,11 @@ public class GameManager : MonoBehaviour
     public int RifleAmmo;
     public int ShotgunAmmo;
 
+    private bool isDying = false;
+    public int PlayerDeaths = 0;
+
+    public bool curentlyPlaying; //To enable or disable CSV tracking
+
     [SerializeField] private GameObject[] items;
 
 
@@ -56,8 +61,12 @@ public class GameManager : MonoBehaviour
         //Debug.Log("Current difficulty ratio: " + DifficultyCalculate());
     }
 
-    public void SetupLevel(bool resetAccuracy) //Setting appropriate variables when replaying level
+    public void SetupLevel(bool resetEntirely) //Setting appropriate variables when replaying level
     {
+        curentlyPlaying = true;
+
+        isDying = false;
+
         PlayerHealth = defaultPlayerHealth;
         RifleAmmo = defaultRifleAmmo;
         ShotgunAmmo = defaultShotgunAmmo;
@@ -66,11 +75,13 @@ public class GameManager : MonoBehaviour
         //enemies = GameObject.FindGameObjectsWithTag("Enemy");
         inCombat = false;
 
-        if (resetAccuracy)
+        if (resetEntirely)
         {
-            accuracyRatio = 1;
+            accuracyRatio = 1; //Reset Accuracy variables
             shotsFired = 0;
             successfulShots = 0;
+
+            PlayerDeaths = 0; //Reset deaths
         }
 
 
@@ -109,15 +120,23 @@ public class GameManager : MonoBehaviour
             PlayerHealth = maxPlayerHealth; //cap health at max
         }
 
-        else if (PlayerHealth <= 0)
+        else if (PlayerHealth <= 0 && !isDying) //Check if functions at death already running
         {
-            StopCoroutine(difficultyUpateCoroutine); //Disable difficulty corutine when not needed
-            SceneManager.LoadScene("GameOver");
-            //SetToDefault();
+            PlayerKill();
+            /*
+           
+            //SetToDefault();*/
         }
-
-
         Debug.Log("Player health now: " + PlayerHealth);
+    }
+
+    void PlayerKill()
+    {
+        isDying = true;
+
+        PlayerDeaths++;
+        StopCoroutine(difficultyUpateCoroutine); //Disable difficulty corutine when not needed
+        SceneManager.LoadScene("GameOver");
     }
 
     //Used by Pickup.cs to check if value already at Max before attempting to increase and destroying pickup
@@ -350,5 +369,8 @@ public class GameManager : MonoBehaviour
 
         return averageRatio;
     }
+    #endregion
+
+    #region CSV Data tracking
     #endregion
 }
