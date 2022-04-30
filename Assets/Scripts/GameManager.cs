@@ -57,7 +57,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        SetupLevel(true);
+        //SetupLevel(true);
     }
 
     // Update is called once per frame
@@ -280,7 +280,7 @@ public class GameManager : MonoBehaviour
 
     public List<GameObject> enemies;
 
-    [SerializeField] private bool enableDDA = true;
+    public bool enableDDA = true;
     [SerializeField] private bool ddaUseHealth = true;
     [SerializeField] private bool ddaUseAmmo = true;
     [SerializeField] private bool ddaUseAccuracy = true;
@@ -387,14 +387,18 @@ public class GameManager : MonoBehaviour
     public class KeyFrame
     {
         public float Time;
-        public int PlayerHealth; //Just PlayerHealth value for testing
+        public int PlayerHealth;
+        public float AccuracyRatio;
+        public float DifficultyModifier;
 
         public KeyFrame() { }
 
-        public KeyFrame(int playerhealth, float time)
+        public KeyFrame(float time, int playerhealth, float accuracyRatio, float difficultyModifer)
         {
             PlayerHealth = playerhealth;
             Time = time;
+            AccuracyRatio = accuracyRatio * 100; //Multiplied by 100 for percentage
+            DifficultyModifier = difficultyModifer * 100;
         }
     }
 
@@ -407,7 +411,7 @@ public class GameManager : MonoBehaviour
         while (curentlyPlaying)
         {
             Debug.Log("Data tracking: Keyframe added");
-            keyFrames.Add(new KeyFrame(PlayerHealth, Time.time));
+            keyFrames.Add(new KeyFrame(Time.time, PlayerHealth, accuracyRatio, difficultyModifier));
             yield return new WaitForSeconds(1);
         }
         isTrackingData = false;
@@ -418,12 +422,14 @@ public class GameManager : MonoBehaviour
 
     public string ToCSV()
     {
-        var sb = new StringBuilder("Time,PlayerHealth");
+        var sb = new StringBuilder("Time,PlayerHealth,Accuracy,Difficulty");
         foreach (var frame in keyFrames)
         {
             sb.Append('\n')
                 .Append(frame.Time.ToString()).Append(',')
-                .Append(frame.PlayerHealth.ToString());
+                .Append(frame.PlayerHealth.ToString()).Append(',')
+                .Append(frame.AccuracyRatio.ToString()).Append(',')
+                .Append(frame.DifficultyModifier.ToString()).Append(',');
         }
 
         return sb.ToString();
@@ -444,7 +450,13 @@ public void SaveToFile()
     var folder = Application.persistentDataPath;
 #endif
 
-    var filePath = Path.Combine(folder, "export.csv");
+        string fileName;
+        if (enableDDA)
+            fileName = "dda_enabled";
+        else
+            fileName = "dda_disabled";
+
+    var filePath = Path.Combine(folder, fileName+".csv");
 
     using (var writer = new StreamWriter(filePath, false))
     {

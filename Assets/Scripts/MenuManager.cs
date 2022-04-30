@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 /// <summary>
 /// Manager for buttons in Game Over and WinScene menu
@@ -9,18 +10,26 @@ using UnityEngine.SceneManagement;
 public class MenuManager : MonoBehaviour
 {
     [SerializeField] string playSceneName; //Name of scene to be played if 'Play Again' pressed
-    [SerializeField] bool resetAccuracy; //Dictates whether player accuracy will be kept from previous session or reset
+    [SerializeField] bool resetEntirely; //Dictates whether player accuracy and deaths will be kept from previous session or reset
+
+    GameManager gameManager;
+    Toggle DDAToggle;
 
     void Start()
     {
         //Re-enable cursor on menu load
         Cursor.visible = true;
         Screen.lockCursor = false;
+
+        gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+        DDAToggle = GameObject.Find("DDAToggle").GetComponent<Toggle>();
+
+        DDAToggle.isOn = gameManager.enableDDA; //Set initial toggle correctly
     }
 
-    public void PlayAgain() //Play level again
+    public void Play() //Play level
     {
-        GameObject.Find("GameManager").GetComponent<GameManager>().SetupLevel(resetAccuracy);
+        gameManager.SetupLevel(resetEntirely);
 
         SceneManager.LoadScene(playSceneName);
     }
@@ -38,5 +47,10 @@ public class MenuManager : MonoBehaviour
         //Quit play mode
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
+    }
+
+    public void EnableDDA()
+    {
+        gameManager.enableDDA = DDAToggle.isOn;
     }
 }
