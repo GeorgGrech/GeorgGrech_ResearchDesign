@@ -390,15 +390,17 @@ public class GameManager : MonoBehaviour
         public int PlayerHealth;
         public float AccuracyRatio;
         public float DifficultyModifier;
+        public int PlayerDeaths;
 
         public KeyFrame() { }
 
-        public KeyFrame(float time, int playerhealth, float accuracyRatio, float difficultyModifer)
+        public KeyFrame(float time, int playerhealth, float accuracyRatio, float difficultyModifer,int playerDeaths)
         {
             PlayerHealth = playerhealth;
             Time = time;
             AccuracyRatio = accuracyRatio * 100; //Multiplied by 100 for percentage
             DifficultyModifier = difficultyModifer * 100;
+            PlayerDeaths = playerDeaths;
         }
     }
 
@@ -411,7 +413,7 @@ public class GameManager : MonoBehaviour
         while (curentlyPlaying)
         {
             Debug.Log("Data tracking: Keyframe added");
-            keyFrames.Add(new KeyFrame(Time.time, PlayerHealth, accuracyRatio, difficultyModifier));
+            keyFrames.Add(new KeyFrame(Time.time, PlayerHealth, accuracyRatio, difficultyModifier, PlayerDeaths));
             yield return new WaitForSeconds(1);
         }
         isTrackingData = false;
@@ -422,14 +424,15 @@ public class GameManager : MonoBehaviour
 
     public string ToCSV()
     {
-        var sb = new StringBuilder("Time,PlayerHealth,Accuracy,Difficulty");
+        var sb = new StringBuilder("Time,PlayerHealth,Accuracy,Difficulty,PlayerDeaths");
         foreach (var frame in keyFrames)
         {
             sb.Append('\n')
                 .Append(frame.Time.ToString()).Append(',')
                 .Append(frame.PlayerHealth.ToString()).Append(',')
                 .Append(frame.AccuracyRatio.ToString()).Append(',')
-                .Append(frame.DifficultyModifier.ToString()).Append(',');
+                .Append(frame.DifficultyModifier.ToString()).Append(',')
+                .Append(frame.PlayerDeaths.ToString()).Append(',');
         }
 
         return sb.ToString();
