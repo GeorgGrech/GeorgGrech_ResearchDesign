@@ -71,10 +71,6 @@ public class GameManager : MonoBehaviour
         curentlyPlaying = true;
         isDying = false;
 
-        if(!isTrackingData) //If not already tracking data
-        {
-            StartCoroutine(AddKeyframes()); //Start tracking data for CSV
-        }
 
         PlayerHealth = defaultPlayerHealth;
         RifleAmmo = defaultRifleAmmo;
@@ -93,8 +89,12 @@ public class GameManager : MonoBehaviour
             PlayerDeaths = 0; //Reset deaths
         }
 
-
         difficultyUpateCoroutine = StartCoroutine(UpdateDifficulty());
+
+        if(!isTrackingData) //If not already tracking data
+        {
+            StartCoroutine(AddKeyframes()); //Start tracking data for CSV
+        }
     }
 
     //Ammo updating to be accessed from weapon or item drops - Could be cleaned up
@@ -404,17 +404,20 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private List<KeyFrame> keyFrames = new List<KeyFrame>(10000);
+    private List<KeyFrame> keyFrames;
 
     private IEnumerator AddKeyframes()
     {
+        keyFrames = new List<KeyFrame>(10000);
+        int timeTrack = 0;
         isTrackingData = true;
         Debug.Log("Data tracking: Started");
         while (curentlyPlaying)
         {
             Debug.Log("Data tracking: Keyframe added");
-            keyFrames.Add(new KeyFrame(Time.time, PlayerHealth, accuracyRatio, difficultyModifier, PlayerDeaths));
+            keyFrames.Add(new KeyFrame(timeTrack, PlayerHealth, accuracyRatio, difficultyModifier, PlayerDeaths));
             yield return new WaitForSeconds(1);
+            timeTrack++;
         }
         isTrackingData = false;
 
@@ -424,7 +427,7 @@ public class GameManager : MonoBehaviour
 
     public string ToCSV()
     {
-        var sb = new StringBuilder("Time,PlayerHealth,Accuracy,Difficulty,PlayerDeaths");
+        var sb = new StringBuilder("Time (Seconds),PlayerHealth,Accuracy (Percentage),Difficulty (Percentage),PlayerDeaths");
         foreach (var frame in keyFrames)
         {
             sb.Append('\n')
